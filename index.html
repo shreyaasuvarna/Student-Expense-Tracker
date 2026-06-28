@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="header" role="banner">
+    <div class="header__inner container">
+      <div class="header__brand">
+        <span class="header__logo" aria-hidden="true">₹</span>
+        <span class="header__title">Student Expense Tracker</span>
+       
+      </div>
+      <div class="header__month" id="currentMonth" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <main class="main container" id="main-content">
+
+    <!-- ══ SUMMARY CARDS ══ -->
+    <section class="summary" aria-label="Monthly summary">
+      <article class="summary-card summary-card--budget" tabindex="0">
+        <p class="summary-card__label">Monthly Budget</p>
+        <p class="summary-card__value" id="budgetDisplay">₹0</p>
+        <button class="summary-card__edit" id="editBudgetBtn" aria-label="Edit monthly budget">✏️ Set Budget</button>
+      </article>
+      <article class="summary-card summary-card--spent" tabindex="0">
+        <p class="summary-card__label">Total Spent</p>
+        <p class="summary-card__value" id="totalSpent">₹0</p>
+        <p class="summary-card__hint" id="spentHint">No expenses yet</p>
+      </article>
+      <article class="summary-card summary-card--left" tabindex="0">
+        <p class="summary-card__label">Balance Left</p>
+        <p class="summary-card__value" id="balanceLeft">₹0</p>
+        <p class="summary-card__hint" id="balanceHint">Set a budget to start</p>
+      </article>
+    </section>
+
+    <!-- ══ BUDGET PROGRESS ══ -->
+    <section class="progress-section" aria-label="Budget usage">
+      <div class="progress-section__top">
+        <span class="progress-section__label">Budget Used</span>
+        <span class="progress-section__pct" id="budgetPct" aria-live="polite">0%</span>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Budget used">
+        <div class="progress-bar__fill" id="progressFill"></div>
+      </div>
+    </section>
+
+    <!-- ══ CONTENT GRID ══ -->
+    <div class="content-grid">
+
+      <!-- ADD EXPENSE FORM -->
+      <section class="card form-card" aria-label="Add expense">
+        <h2 class="card__title">Add Expense</h2>
+
+        <div class="form-group">
+          <label class="form-label" for="expTitle">What did you spend on?</label>
+          <input type="text" id="expTitle" class="form-input" placeholder="e.g. Lunch at canteen" maxlength="60" aria-required="true" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="expAmount">Amount (₹)</label>
+            <input type="number" id="expAmount" class="form-input" placeholder="0" min="1" max="99999" aria-required="true" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="expDate">Date</label>
+            <input type="date" id="expDate" class="form-input" aria-required="true" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <div class="category-grid" role="group" aria-label="Expense category">
+            <button class="cat-btn active" data-cat="food" aria-pressed="true">🍽️ Food</button>
+            <button class="cat-btn" data-cat="travel" aria-pressed="false">🚌 Travel</button>
+            <button class="cat-btn" data-cat="books" aria-pressed="false">📚 Books</button>
+            <button class="cat-btn" data-cat="fun" aria-pressed="false">🎮 Fun</button>
+            <button class="cat-btn" data-cat="health" aria-pressed="false">💊 Health</button>
+            <button class="cat-btn" data-cat="other" aria-pressed="false">📦 Other</button>
+          </div>
+        </div>
+
+        <p class="form-error" id="formError" role="alert" aria-live="assertive"></p>
+        <button class="btn btn--primary btn--full" id="addExpenseBtn" type="button">+ Add Expense</button>
+      </section>
+
+      <!-- CATEGORY BREAKDOWN -->
+      <section class="card chart-card" aria-label="Spending by category">
+        <h2 class="card__title">Spending by Category</h2>
+        <div class="donut-wrap">
+          <svg class="donut" viewBox="0 0 120 120" aria-hidden="true" id="donutSvg">
+            <circle class="donut__track" cx="60" cy="60" r="48" />
+            <!-- Segments injected by JS -->
+          </svg>
+          <div class="donut__center" aria-live="polite">
+            <span class="donut__total" id="donutTotal">₹0</span>
+            <span class="donut__label">spent</span>
+          </div>
+        </div>
+        <ul class="legend" id="legend" aria-label="Category legend"></ul>
+      </section>
+
+    </div><!-- end content-grid -->
+
+    <!-- ══ EXPENSE LIST ══ -->
+    <section class="card list-card" aria-label="Expense history">
+      <div class="list-card__header">
+        <h2 class="card__title">Expense History</h2>
+        <div class="list-controls">
+          <select class="list-select" id="filterCat" aria-label="Filter by category">
+            <option value="all">All Categories</option>
+            <option value="food">🍽️ Food</option>
+            <option value="travel">🚌 Travel</option>
+            <option value="books">📚 Books</option>
+            <option value="fun">🎮 Fun</option>
+            <option value="health">💊 Health</option>
+            <option value="other">📦 Other</option>
+          </select>
+          <button class="btn btn--outline btn--sm" id="clearAllBtn" aria-label="Clear all expenses">Clear All</button>
+        </div>
+      </div>
+
+      <ul class="expense-list" id="expenseList" aria-live="polite" aria-label="List of expenses">
+        <!-- Injected by JS -->
+      </ul>
+
+      <p class="list-empty" id="listEmpty">No expenses yet. Add your first one above! 👆</p>
+    </section>
+
+  </main>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer" role="contentinfo">
+    <p>©  <strong>Student Expense Tracker</strong>· HTML5 · CSS3 · JS</p>
+  </footer>
+
+  <!-- ══ BUDGET MODAL ══ -->
+  <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 class="modal__title" id="modalTitle">Set Monthly Budget</h2>
+      <p class="modal__sub">How much do you plan to spend this month?</p>
+      <div class="form-group">
+        <label class="form-label" for="budgetInput">Budget Amount (₹)</label>
+        <input type="number" id="budgetInput" class="form-input form-input--lg" placeholder="e.g. 5000" min="1" max="999999" />
+      </div>
+      <p class="form-error" id="budgetError" role="alert"></p>
+      <div class="modal__actions">
+        <button class="btn btn--outline" id="modalCancel">Cancel</button>
+        <button class="btn btn--primary" id="modalSave">Save Budget</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
