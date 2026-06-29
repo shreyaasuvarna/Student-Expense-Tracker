@@ -1,7 +1,4 @@
-/* ══════════════════════════════════════
-   Paisa — Student Expense Tracker
-   app.js | DecodeLabs Project 1
-   ══════════════════════════════════════ */
+
 
 'use strict';
 
